@@ -8,6 +8,10 @@ import sys
 HOST = '192.168.0.69'    # The remote host
 PORT = 6666              # The same port as used by the server
 
+def retry_button_cmd(socket_src):
+    cmd = "retry"
+    socket_src.sendall(cmd.strip().encode())
+
 def undo_button_cmd(socket_src):
     cmd = "undo"
     socket_src.sendall(cmd.strip().encode())
@@ -53,9 +57,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     button_frame = tk.Frame(root, bg="black")
     button_frame.pack(side=tk.BOTTOM, fill=tk.X)
 
-    undo_frame = tk.Frame(root, bg="red", width=button_width//2, height=button_height//2)
+    undo_frame = tk.Frame(root, width=button_width//2, height=button_height//2)
     undo_frame.pack_propagate(0)
     undo_frame.pack(side=tk.LEFT)
+
+    retry_frame = tk.Frame(root, width=button_width//2, height=button_height//2)
+    retry_frame.pack_propagate(0)
+    retry_frame.pack(side=tk.RIGHT)
     
     stop_frame = tk.Frame(button_frame, width=button_width, height=button_height)
     stop_frame.pack_propagate(0)
@@ -69,6 +77,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     record_frame.pack_propagate(0)
     record_frame.pack(side=tk.LEFT)
 
+    retry_button = tk.Button(retry_frame, text="Retry\nRecording", command=lambda x=s: retry_button_cmd(x))
     undo_button = tk.Button(undo_frame, text="Undo", command=lambda x=s: undo_button_cmd(x))
     stop_button = tk.Button(stop_frame, text="Stop", command=lambda x=s: stop_button_cmd(x))
     play_button = tk.Button(play_frame, text="Play", command=lambda x=s: play_button_cmd(x))
@@ -76,6 +85,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     quit_button = tk.Button(quit_frame, text="Quit", command=lambda x=s: quit_button_cmd(x))
 
     quit_button.pack()
+    retry_button.pack(fill=tk.BOTH, expand=1)
     undo_button.pack(fill=tk.BOTH, expand=1)
     stop_button.pack(fill=tk.BOTH, expand=1)
     play_button.pack(fill=tk.BOTH, expand=1)
