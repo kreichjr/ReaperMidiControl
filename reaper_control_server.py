@@ -3,6 +3,7 @@
 
 # Helpful notes:
 # get_device_info(an_id) -> (interf, name, input, output, opened)
+# Midi Note 69 = Undo
 # Midi Note 70 = Stop
 # Midi Note 72 = Play
 # Midi Note 74 = Record
@@ -43,6 +44,10 @@ class ReaperControlServer:
 
         self.midi_out.set_instrument(0)
 
+    def undoEdit(self):
+        self.midi_out.note_on(69,127)
+        self.midi_out.note_off(69,127)
+    
     def stopSong(self):
         self.midi_out.note_on(70,127)
         self.midi_out.note_off(70,127)
@@ -79,6 +84,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 main_program.playSong()
             elif command == "record":
                 main_program.recordSong()
+            elif command == "undo":
+                main_program.undoEdit()
             elif command == "endme":
                 main_program.endMidi()
                 sys.exit(1)
